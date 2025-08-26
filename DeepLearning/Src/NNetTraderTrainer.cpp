@@ -37,10 +37,9 @@ namespace jv
 
 		// Pick a random stock.
 		ptr->stockId = rand() % info.scope->GetTimeSeriesCount();
-
 		auto current = nnet.GetCurrent();
 
-		if (ptr->currentEpoch == 0)
+		if (!nnet.constructed) // ptr->currentEpoch == 0)
 		{
 			nnet.Construct(arena, tempArena, current);
 			nnet.CreateParameters(arena);

@@ -897,6 +897,7 @@ namespace jv::ai
 		}
 
 		// Save result.
+		fout << static_cast<uint32_t>(result.outputType) << std::endl;
 		fout << result.neurons.length << std::endl;
 		fout << result.weights.length << std::endl;
 		for (auto& neuron : result.neurons)
@@ -904,6 +905,7 @@ namespace jv::ai
 		for (auto& weight : result.weights)
 			fout << weight << std::endl;
 
+		// Save parameters of result.
 		const size_t s = GetParameterSize(result);
 		for (uint32_t i = 0; i < s; i++)
 		{
@@ -914,6 +916,7 @@ namespace jv::ai
 		// Save generation.
 		for (auto& instance : generation)
 		{
+			fout << static_cast<uint32_t>(instance.outputType) << std::endl;
 			fout << instance.neurons.length << std::endl;
 			fout << instance.weights.length << std::endl;
 			for (auto& neuron : instance.neurons)
@@ -977,9 +980,10 @@ namespace jv::ai
 		// Load maps.
 		std::getline(fin, line);
 		const uint32_t nMapCount = std::stoi(line);
-		for (uint32_t i = 0; i < neurons.length; i++)
+		for (uint32_t i = 0; i < neuronMap.length; i++)
 			neuronMap.ptr[i] = {};
 		neuronMap.count = nMapCount;
+
 		for (uint32_t i = 0; i < nMapCount; i++)
 		{
 			std::getline(fin, line);
@@ -989,7 +993,7 @@ namespace jv::ai
 			std::getline(fin, line);
 			const uint32_t to = std::stoi(line);
 			std::getline(fin, line);
-			const uint64_t value = std::stoll(line);
+			const uint64_t value = std::stol(line);
 
 			auto& keyPair = neuronMap.ptr[id];
 			keyPair.key = Key{ from, to }.value;
@@ -998,9 +1002,10 @@ namespace jv::ai
 
 		std::getline(fin, line);
 		const uint32_t wMapCount = std::stoi(line);
-		for (uint32_t i = 0; i < weights.length; i++)
+		for (uint32_t i = 0; i < weightMap.length; i++)
 			weightMap.ptr[i] = {};
 		weightMap.count = wMapCount;
+
 		for (uint32_t i = 0; i < wMapCount; i++)
 		{
 			std::getline(fin, line);
@@ -1010,7 +1015,7 @@ namespace jv::ai
 			std::getline(fin, line);
 			const uint32_t to = std::stoi(line);
 			std::getline(fin, line);
-			const uint64_t value = std::stoll(line);
+			const uint64_t value = std::stol(line);
 
 			auto& keyPair = weightMap.ptr[id];
 			keyPair.key = Key{ from, to }.value;
@@ -1020,6 +1025,10 @@ namespace jv::ai
 		// Now load in the main result.
 		resultScope = arena.CreateScope();
 		result = {};
+
+		std::getline(fin, line);
+		const uint32_t outputType = std::stoi(line);
+		result.outputType = static_cast<DynInstance::OutputType>(outputType);
 
 		std::getline(fin, line);
 		const uint32_t neuronLength = std::stoi(line);
@@ -1059,6 +1068,10 @@ namespace jv::ai
 		for (uint32_t i = 0; i < generationLength; i++)
 		{
 			auto& instance = generation[i] = {};
+
+			std::getline(fin, line);
+			const uint32_t outputType = std::stoi(line);
+			instance.outputType = static_cast<DynInstance::OutputType>(outputType);
 
 			std::getline(fin, line);
 			const uint32_t neuronLength = std::stoi(line);

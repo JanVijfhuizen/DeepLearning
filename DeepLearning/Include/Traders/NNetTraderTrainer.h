@@ -15,7 +15,7 @@ namespace jv
 		Array<uint32_t> timeFrames;
 
 		uint32_t epochs = 25; // 25
-		uint32_t batchSize = 200; // 20
+		uint32_t batchSize = 200; // 200
 		uint32_t maxEpochsWithoutProgress = 8;
 
 		float epochHighestRating = 0;
